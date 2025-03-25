@@ -1,0 +1,59 @@
+//const express = require('express')
+import Hello from "./Hello.js";
+import "dotenv/config";
+import express from 'express';
+import Lab5 from "./Lab5/index.js";
+import UserRoutes from "./Lab5/Kambaz/Users/routes.js";
+import CourseRoutes from "./Lab5/Kambaz/Courses/routes.js";
+import cors from "cors";
+import session from "express-session";
+import SessionController from "./Lab5/SessionControllers.js";
+import EnrollmentsRoutes from "./Lab5/Kambaz/Enrollments/routes.js";
+import ModuleRoutes from "./Lab5/Kambaz/Modules/routes.js";
+import AssignmentRoutes from "./Lab5/Kambaz/Assignments/routes.js";
+
+const app = express();
+//cors governs the policies and mechanisms of how various resources can be shared across different domains or origins.
+app.use(cors(
+    {
+        credentials: true,
+        origin: process.env.NETLIFY_URL || "http://localhost:5173",
+    })
+);
+
+const sessionOptions = {
+    secret: process.env.SESSION_SECRET || "kambaz",
+    resave: false,
+    saveUninitialized: false,
+};
+
+if (process.env.NODE_ENV !== "development") {
+    sessionOptions.proxy = true;
+    sessionOptions.cookie = {
+        sameSite: "none",
+        secure: true,
+        domain: process.env.NODE_SERVER__DOMAIN,
+    };
+}
+app.use(session(sessionOptions)); // creating the new instance object manioulating the incoming request
+app.use(express.json());
+
+UserRoutes(app);
+CourseRoutes(app);
+EnrollmentsRoutes(app);
+ModuleRoutes(app);
+AssignmentRoutes(app);
+//const port = process.env.PORT || 4000;
+
+//custom routes
+Hello(app);
+Lab5(app);
+SessionController(app);
+
+//app.get('/hello', (req, res) => {res.send('Life is good!')})
+//app.get('/', (req, res) => {
+//    res.send('Welcome to Full Stack Development!')
+//})
+
+//app.listen(4000)
+app.listen(process.env.PORT || 4000)
