@@ -1,8 +1,8 @@
-import courses from "./courses/routes.js";
-import modules from "./modules/routes.js";
-import assignments from "./assignments/routes.js";
-import users from "./users/routes.js";
+import courses from "../Courses/routes.js";
+import modules from "../Modules/routes.js";
+import assignments from "../Assignments/routes.js";
+import users from "../Users/routes.js";
 //import grades from "./grades.js";
-import enrollments from "./enrollments/routes.js";
+import enrollments from "../Enrollments/routes.js";
 
 export default {  courses, modules, assignments, users, enrollments};
