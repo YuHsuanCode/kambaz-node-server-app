@@ -18,7 +18,6 @@ const app = express();
 //cors governs the policies and mechanisms of how various resources can be shared across different domains or origins.
 app.use(cors(
     {
-        credentials: true,
         //origin: "http://localhost:5173",
         origin: "https://kambaz-react-web-canvas.netlify.app",
         credentials: true,
@@ -35,14 +34,14 @@ const sessionOptions = {
     },
 };
 
-if (process.env.NODE_ENV !== "development") {
-    sessionOptions.proxy = true;
-    sessionOptions.cookie = {
-        sameSite: "none",
-        secure: true,
-        domain: process.env.NODE_SERVER__DOMAIN,
-    };
-}
+// if (process.env.NODE_ENV !== "development") {
+//     sessionOptions.proxy = true;
+//     sessionOptions.cookie = {
+//         sameSite: "none",
+//         secure: true,
+//         domain: process.env.NODE_SERVER__DOMAIN,
+//     };
+// }
 app.use(session(sessionOptions)); // creating the new instance object manioulating the incoming request
 app.use(express.json());
 
