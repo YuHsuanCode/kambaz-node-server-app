@@ -15,7 +15,16 @@ export default function CourseRoutes(app) {
         //const courses = Database.courses;
         res.send(courses);
     });
-    
+
+    app.get("/api/courses/:courseId", (req, res) => {
+        const { courseId } = req.params;
+        const course = dao.findCourseById(courseId);
+        if (!course) {
+            res.status(404).json({ message: "Course not found" });
+            return;
+        }
+        res.json(course);
+    });
 
     app.delete("/api/courses/:courseId", (req,res)=>{
         const {courseId} = req.params;

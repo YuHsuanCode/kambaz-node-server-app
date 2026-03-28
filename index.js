@@ -15,22 +15,39 @@ import ModuleRoutes from "./Kambaz/Modules/routes.js";
 import AssignmentRoutes from "./Kambaz/Assignments/routes.js";
 
 const app = express();
-//cors governs the policies and mechanisms of how various resources can be shared across different domains or origins.
-app.use(cors(
-    {
-        //origin: "http://localhost:5173",
-        origin: "https://kambaz-react-web-canvas.netlify.app",
+// Behind Render/nginx so secure cookies and req.protocol are correct
+app.set("trust proxy", 1);
+
+const allowedOrigins = (process.env.CLIENT_ORIGIN ||
+    "https://kambaz-react-web-canvas.netlify.app")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+app.use(
+    cors({
+        origin(origin, callback) {
+            if (!origin) {
+                callback(null, true);
+                return;
+            }
+            if (allowedOrigins.includes(origin)) {
+                callback(null, origin);
+                return;
+            }
+            callback(null, false);
+        },
         credentials: true,
     })
 );
 
 const sessionOptions = {
-    secret: "any string",
+    secret: process.env.SESSION_SECRET || "dev-only-change-in-production",
     resave: false,
     saveUninitialized: false,
     cookie: {
-      sameSite: "none",
-      secure: true,
+        sameSite: "none",
+        secure: true,
     },
 };
 

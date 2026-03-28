@@ -11,6 +11,10 @@ export function findAllCourses(){
     return Database.courses;
 };
 
+export function findCourseById(courseId) {
+    return Database.courses.find((course) => course._id === courseId);
+}
+
 export function findCoursesForEnrolledUser(userId){
     //extract courses and enrollments data from the database object
     const{courses, enrollments} = Database;
