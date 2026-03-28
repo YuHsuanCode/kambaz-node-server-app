@@ -25,8 +25,20 @@ export function requireRoles(...allowedRoles) {
     };
 }
 
-/** ADMIN + FACULTY: courses, modules, users, enrollments management, create course */
+/** ADMIN + FACULTY: courses, modules, users, and any non-assignment writes */
 export const requireFacultyOrAdmin = requireRoles("ADMIN", "FACULTY");
 
-/** ADMIN + FACULTY + TA: assignments (create / update / delete) */
+/** ADMIN + FACULTY + TA: assignments only */
 export const requireAssignmentStaff = requireRoles("ADMIN", "FACULTY", "TA");
+
+/** For the client: who can edit what (everyone can use GETs to view; only these roles get write buttons) */
+export function permissionsForRole(role) {
+    const facultyOrAdmin = role === "ADMIN" || role === "FACULTY";
+    return {
+        canManageCourses: facultyOrAdmin,
+        canManageModules: facultyOrAdmin,
+        canManageAssignments: facultyOrAdmin || role === "TA",
+        canManageUsers: facultyOrAdmin,
+        canCreateCourse: facultyOrAdmin,
+    };
+}

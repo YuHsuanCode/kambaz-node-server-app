@@ -2,7 +2,11 @@ import * as dao from "./dao.js";
 //let currentUser = null;
 import * as courseDao from "../Courses/dao.js";
 import * as enrollmentsDao from "../Enrollments/dao.js";
-import { requireFacultyOrAdmin } from "../auth.js";
+import { requireFacultyOrAdmin, permissionsForRole } from "../auth.js";
+
+function userWithPermissions(user) {
+    return { ...user, permissions: permissionsForRole(user.role) };
+}
 
 export default function UserRoutes(app) {
 
@@ -32,7 +36,7 @@ export default function UserRoutes(app) {
             res.json(null);
             return;
         }
-        res.json(currentUser);
+        res.json(userWithPermissions(currentUser));
     };
     app.get("/api/users/profile", profile);
     app.post("/api/users/profile", profile);
@@ -55,7 +59,7 @@ export default function UserRoutes(app) {
         dao.updateUser(userId, userUpdates);
         const currentUser = dao.findUserById(userId);
         req.session["currentUser"] = currentUser;
-        res.json(currentUser);
+        res.json(userWithPermissions(currentUser));
     };
     app.put("/api/users/:userId", updateUser);
 
@@ -70,7 +74,7 @@ export default function UserRoutes(app) {
         //create new use and store it in the session's currentUser property
         const currentUser = dao.createUser(req.body);
         req.session["currentUser"] = currentUser;
-        res.json(currentUser);
+        res.json(userWithPermissions(currentUser));
     };
     app.post("/api/users/signup", signup);
 
@@ -90,7 +94,7 @@ export default function UserRoutes(app) {
             const currentUser = dao.findUserByCredentials(username, password);
             if(currentUser){
                 req.session["currentUser"] = currentUser;
-                res.json(currentUser);
+                res.json(userWithPermissions(currentUser));
             } else {
                 res.status(401).json({
                     message: "Unable to login. Try again later."
@@ -111,9 +115,7 @@ export default function UserRoutes(app) {
     };
     app.post("/api/users/signout", signout);
 
-    //courses — students: enrolled only; FACULTY / TA / ADMIN: all courses (seed + new)
-    const STAFF_ROLES = ["FACULTY", "TA", "ADMIN"];
-
+    // Dashboard: logged-in user always gets full course list to view (edits are role-gated elsewhere).
     const findCoursesForEnrolledUser = (req, res) =>{
         let{userId} = req.params;
         if(userId === "current"){
@@ -122,11 +124,8 @@ export default function UserRoutes(app) {
                 res.json([]);
                 return;
             }
-            if (STAFF_ROLES.includes(currentUser.role)) {
-                res.json(courseDao.findAllCourses());
-                return;
-            }
-            userId = currentUser._id;
+            res.json(courseDao.findAllCourses());
+            return;
         }
         const courses = courseDao.findCoursesForEnrolledUser(userId);
         res.json(courses);
