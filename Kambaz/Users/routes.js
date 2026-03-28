@@ -28,6 +28,7 @@ export default function UserRoutes(app) {
     const findUserById = (req, res)=> { 
         const userId = req.params.userId;
         const user = dao.findUserById(userId);
+
         if (!user) {
             res.status(404).json({ message: "User not found" });
             return;
