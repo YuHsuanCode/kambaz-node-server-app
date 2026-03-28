@@ -1,4 +1,5 @@
 import * as enrollmentsDao from "./dao.js";
+import { requireSession } from "../auth.js";
 
 export default function EnrollmentsRoutes(app) {
     const enrollUserInCourse = async (req, res) => {
@@ -6,5 +7,5 @@ export default function EnrollmentsRoutes(app) {
         const enrollment = await enrollmentsDao.enrollUserInCourse(userId, courseId);
         res.json(enrollment);
     };
-    app.post("/api/enrollments", enrollUserInCourse);
+    app.post("/api/enrollments", requireSession, enrollUserInCourse);
 }

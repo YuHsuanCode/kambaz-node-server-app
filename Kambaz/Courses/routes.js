@@ -2,9 +2,10 @@ import * as dao from "./dao.js";
 import Database from "../Database/index.js";
 import * as modulesDao from "../Modules/dao.js";
 import * as assignmentsDao from "../Assignments/dao.js";
+import { requireFacultyOrAdmin, requireAssignmentStaff } from "../auth.js";
 
 export default function CourseRoutes(app) {
-    app.post("/api/courses", (req, res) => {
+    app.post("/api/courses", requireFacultyOrAdmin, (req, res) => {
         const course = {...req.body, _id: new Date().getTime().toString()};
         Database.courses.push(course);
         res.send(course);
@@ -26,7 +27,7 @@ export default function CourseRoutes(app) {
         res.json(course);
     });
 
-    app.delete("/api/courses/:courseId", (req,res)=>{
+    app.delete("/api/courses/:courseId", requireFacultyOrAdmin, (req,res)=>{
         const {courseId} = req.params;
         const status = dao.deleteCourse(courseId);
         res.send(status); // deletion successfulr, respond with status 204
@@ -34,15 +35,19 @@ export default function CourseRoutes(app) {
 
     //put route that parses the id of the course as a path parameter and updates uses the DAO func
     //to update the corresponding course with the updates in HTTP request body
-    app.put("/api/courses/:courseId", (req,res) => {
+    app.put("/api/courses/:courseId", requireFacultyOrAdmin, (req,res) => {
         const{courseId} = req.params;
         const courseUpdates = req.body;
-        const status = dao.updateCourse(courseId, courseUpdates);
-        res.send(status);
+        const updated = dao.updateCourse(courseId, courseUpdates);
+        if (!updated) {
+            res.status(404).json({ message: "Course not found" });
+            return;
+        }
+        res.json(updated);
     });
 
 
-    app.post("/api/courses/:courseId/modules", (req,res)=>{
+    app.post("/api/courses/:courseId/modules", requireFacultyOrAdmin, (req,res)=>{
         const {courseId} = req.params;
         const module = {
             ...req.body,
@@ -58,7 +63,7 @@ export default function CourseRoutes(app) {
         res.json(modules);
     });
 
-    app.post("/api/courses/:courseId/assignments", (req,res)=>{
+    app.post("/api/courses/:courseId/assignments", requireAssignmentStaff, (req,res)=>{
         const {courseId} = req.params;
         const assignment = {
             ...req.body,

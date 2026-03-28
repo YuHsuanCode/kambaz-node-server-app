@@ -100,12 +100,9 @@ export default function WorkingWithArrays(app){
             res.status(404).json({message:`Unable to update Todo with ID ${id}` });
             return;
         }
-        todos = todos.map((t) => {
-            if(t.id === parseInt(id)){
-                return {...t, ...req.body};
-            }
-            return t;
-        });
+        const idNum = parseInt(id);
+        const idx = todos.findIndex((t) => t.id === idNum);
+        todos[idx] = { ...todos[idx], ...req.body };
         res.sendStatus(200);
     })
 };

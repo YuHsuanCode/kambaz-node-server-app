@@ -1,7 +1,8 @@
 import db from "../Database/index.js";
+import { requireAssignmentStaff } from "../auth.js";
 
 export default function AssignmentRoutes(app){
-    app.post("/api/courses/:cid/assignments", (req,res) => {
+    app.post("/api/courses/:cid/assignments", requireAssignmentStaff, (req,res) => {
         const {cid} = req.params;
         const newAssignment ={
             ...req.body,
@@ -17,13 +18,13 @@ export default function AssignmentRoutes(app){
         res.json(assignments);
     });
 
-    app.delete("/api/assignments/:aid", (req,res) => {
+    app.delete("/api/assignments/:aid", requireAssignmentStaff, (req,res) => {
         const {aid} = req.params;
         db.assignments = db.assignments.filter((a) => a._id !== aid);
         res.sendStatus(200);
     });
 
-    app.put("/api/assignments/:aid", (req,res) => {
+    app.put("/api/assignments/:aid", requireAssignmentStaff, (req,res) => {
         const {aid} = req.params;
         const assignmentIndex = db.assignments.findIndex((a) => a._id === aid);
         db.assignments[assignmentIndex] = {

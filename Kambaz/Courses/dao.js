@@ -34,7 +34,10 @@ export function deleteCourse(courseId){
 
 export function updateCourse(courseId, courseUpdates){
     const {courses} = Database;
-    const course = courses.find((course) => course._id === courseId);
-    Object.assign(course, courseUpdates); // apply the updates to the course
+    const course = courses.find((c) => c._id === courseId);
+    if (!course) {
+        return null;
+    }
+    Object.assign(course, courseUpdates);
     return course;
 }

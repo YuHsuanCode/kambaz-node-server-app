@@ -17,7 +17,7 @@ export default function SessionController(app){
     //only the specific
     const resetSession = (req, res) =>{
         req.session.destroy();
-        res.send(200);
+        res.sendStatus(200);
     };
     app.get("/api/session/reset", resetSession);
 
