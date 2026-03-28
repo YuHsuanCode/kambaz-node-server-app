@@ -63,13 +63,30 @@ export default function UserRoutes(app) {
     app.post("/api/users/signup", signup);
 
     const signin = (req, res)=> { 
-        const {username, password} = req.body;
-        const currentUser = dao.findUserByCredentials(username, password);
-        if(currentUser){
-            req.session["currentUser"] = currentUser;
-            res.json(currentUser);
-        } else {
-            res.status(401).json({message: "Unable to login. Try again later."});
+        try {
+            const { username, password } = req.body || {};
+    
+            // 🔥 prevent crash
+            if (!username || !password) {
+                return res.status(400).json({
+                    message: "Missing username or password"
+                });
+            }
+       
+            const currentUser = dao.findUserByCredentials(username, password);
+            if(currentUser){
+                req.session["currentUser"] = currentUser;
+                res.json(currentUser);
+            } else {
+                res.status(401).json({
+                    message: "Unable to login. Try again later."
+                });
+            }
+        } catch (err) {
+            console.error("Signin error:", err);
+            res.status(500).json({
+                message: "Server error"
+            });
         }
     };
     app.post("/api/users/signin", signin);
