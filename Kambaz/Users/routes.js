@@ -64,9 +64,11 @@ export default function UserRoutes(app) {
 
     const signin = (req, res)=> { 
         try {
+            console.log("Signin request received", req.body);
+
             const { username, password } = req.body || {};
     
-            // 🔥 prevent crash
+            // prevent crash
             if (!username || !password) {
                 return res.status(400).json({
                     message: "Missing username or password"
