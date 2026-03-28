@@ -20,7 +20,7 @@ app.use(cors(
     {
         credentials: true,
         //origin: "http://localhost:5173",
-        origin: process.env.FRONTEND_URL,
+        origin: "https://kambaz-react-web-canvas.netlify.app",
         credentials: true,
     })
 );
@@ -29,6 +29,10 @@ const sessionOptions = {
     secret: "any string",
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      sameSite: "none",
+      secure: true,
+    },
 };
 
 if (process.env.NODE_ENV !== "development") {
@@ -59,5 +63,9 @@ SessionController(app);
 //    res.send('Welcome to Full Stack Development!')
 //})
 
-app.listen(4000)
+//app.listen(4000)
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`);
+});
 //app.listen(process.env.PORT || 4000)

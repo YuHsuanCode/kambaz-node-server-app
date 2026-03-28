@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/YuHsuan-Y/kambaz-node-server-app.git"
+    "url": "git+https://github.com/YuHsuanCode/kambaz-node-server-app.git"
   },
   "keywords": [
     "Node",
@@ -25,9 +25,9 @@
   "author": "YuHsuan Yang",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/YuHsuan-Y/kambaz-node-server-app/issues"
+    "url": "https://github.com/YuHsuanCode/kambaz-node-server-app/issues"
   },
-  "homepage": "https://github.com/YuHsuan-Y/kambaz-node-server-app#readme",
+  "homepage": "https://github.com/YuHsuanCode/kambaz-node-server-app#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
